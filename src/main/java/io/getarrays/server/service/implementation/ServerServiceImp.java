@@ -7,11 +7,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Collection;
+import java.util.Random;
 
 import static io.getarrays.server.enumeration.Status.*;
 import static java.lang.Boolean.TRUE;
@@ -20,7 +22,7 @@ import static java.lang.Boolean.TRUE;
 @Service
 @Transactional
 @Slf4j
-public class ServiceImplementation implements ServerService {
+public class ServerServiceImp implements ServerService {
     private final ServerRepository serverRepository;
 
     @Override
@@ -34,7 +36,7 @@ public class ServiceImplementation implements ServerService {
 
     @Override
     public Server ping(String ipAddress) throws IOException {
-        log.info("Pingin server IP: {}", ipAddress);
+        log.info("Pinging server IP: {}", ipAddress);
         Server server = serverRepository.findByIpAddress(ipAddress);
         InetAddress address = InetAddress.getByName(ipAddress);
         server.setStatus(address.isReachable(10000) ? SERVER_UP : SERVER_DOWN);
@@ -69,6 +71,7 @@ public class ServiceImplementation implements ServerService {
     }
 
     private String setServerImageUrl() {
-        return null;
+        String[] imagensNames = {"server1.png","server2.png","server3.png","server4.png"};
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path("/server/image/" + imagensNames[new Random().nextInt(4)]).toUriString();
     }
 }
